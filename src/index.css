@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-white text-slate-800 font-sans;
+}
+
+/* Image placeholder styling for missing images */
+.img-placeholder {
+  @apply bg-slate-100 flex items-center justify-center text-slate-400 text-sm;
+}
