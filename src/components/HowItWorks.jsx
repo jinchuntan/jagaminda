@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { Radio, Cpu, Send, Bell, HeartHandshake } from 'lucide-react'
+import useInView from '../hooks/useInView'
 
 const steps = [
   { icon: Radio, label: 'Sense', description: 'Goggles read motion, light and humidity' },
@@ -9,38 +11,55 @@ const steps = [
 ]
 
 export default function HowItWorks() {
+  const [activeStep, setActiveStep] = useState(null)
+  const [ref, inView] = useInView()
+  const [flowRef, flowInView] = useInView()
+
   return (
     <section id="how-it-works" className="py-24 md:py-32">
       <div className="max-w-5xl mx-auto px-6">
         <div className="border-t border-slate-100 pt-24 md:pt-32">
-          <span className="section-label">How It Works</span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-navy tracking-tight leading-snug max-w-xl">
-            How the design works
-          </h2>
-          <p className="mt-6 text-base sm:text-lg text-slate-400 leading-relaxed max-w-2xl">
-            JagaMinda starts with the smart goggles. A motion sensor reads tilt, movement and sudden impact to detect unstable walking or falls. Light and environmental sensors monitor exposure around the wearer. The key technology is our custom graphene oxide coated Aluminium Nitride sensor. Aluminium Nitride responds to light, while graphene oxide reacts strongly to moisture in the air. When these conditions change, the sensor produces small electrical changes that can be measured. An ESP32 chip inside the goggles reads these signals, combines them with motion data and sends the readings by Bluetooth to the caregiver app. The app compares the readings with the wearer's normal pattern and turns unusual changes into simple alerts.
-          </p>
+          <div ref={ref} className={`fade-in-up ${inView ? 'visible' : ''}`}>
+            <span className="section-label">How It Works</span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-navy tracking-tight leading-snug max-w-xl">
+              How the design works
+            </h2>
+            <p className="mt-6 text-base sm:text-lg text-slate-400 leading-relaxed max-w-2xl">
+              JagaMinda starts with the smart goggles. A motion sensor reads tilt, movement and sudden impact to detect unstable walking or falls. Light and environmental sensors monitor exposure around the wearer. The key technology is our custom graphene oxide coated Aluminium Nitride sensor. Aluminium Nitride responds to light, while graphene oxide reacts strongly to moisture in the air. When these conditions change, the sensor produces small electrical changes that can be measured. An ESP32 chip inside the goggles reads these signals, combines them with motion data and sends the readings by Bluetooth to the caregiver app. The app compares the readings with the wearer's normal pattern and turns unusual changes into simple alerts.
+            </p>
+          </div>
 
-          {/* Process flow */}
-          <div className="mt-16 sm:mt-20">
+          {/* Interactive process flow */}
+          <div ref={flowRef} className={`mt-16 sm:mt-20 fade-in-up ${flowInView ? 'visible' : ''}`}>
             {/* Desktop flow */}
             <div className="hidden sm:grid grid-cols-5 gap-0">
               {steps.map((step, i) => (
-                <div key={step.label} className="relative flex flex-col items-center text-center">
-                  {/* Connecting line */}
+                <button
+                  key={step.label}
+                  onClick={() => setActiveStep(activeStep === i ? null : i)}
+                  className="relative flex flex-col items-center text-center group cursor-pointer"
+                >
                   {i < steps.length - 1 && (
                     <div className="absolute top-5 left-1/2 w-full h-px bg-slate-100" />
                   )}
-                  <div className="relative z-10 w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400">
+                  <div className={`relative z-10 w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-300 ${
+                    activeStep === i
+                      ? 'bg-navy border-navy text-white scale-110'
+                      : 'bg-white border-slate-200 text-slate-400 group-hover:border-navy group-hover:text-navy'
+                  }`}>
                     <step.icon size={16} strokeWidth={1.5} />
                   </div>
-                  <span className="mt-3 text-xs font-semibold text-navy tracking-wide">
+                  <span className={`mt-3 text-xs font-semibold tracking-wide transition-colors ${
+                    activeStep === i ? 'text-navy' : 'text-navy'
+                  }`}>
                     {step.label}
                   </span>
-                  <span className="mt-1 text-[11px] text-slate-400 leading-snug max-w-[10rem]">
+                  <span className={`mt-1 text-[11px] leading-snug max-w-[10rem] transition-all duration-300 ${
+                    activeStep === i ? 'text-slate-600' : 'text-slate-400'
+                  }`}>
                     {step.description}
                   </span>
-                </div>
+                </button>
               ))}
             </div>
 
@@ -48,15 +67,22 @@ export default function HowItWorks() {
             <div className="flex sm:hidden flex-col gap-0">
               {steps.map((step, i) => (
                 <div key={step.label}>
-                  <div className="flex items-center gap-4">
-                    <div className="w-9 h-9 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 flex-shrink-0">
+                  <button
+                    onClick={() => setActiveStep(activeStep === i ? null : i)}
+                    className="flex items-center gap-4 w-full text-left group"
+                  >
+                    <div className={`w-9 h-9 rounded-full border flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
+                      activeStep === i
+                        ? 'bg-navy border-navy text-white'
+                        : 'bg-white border-slate-200 text-slate-400 group-hover:border-navy group-hover:text-navy'
+                    }`}>
                       <step.icon size={14} strokeWidth={1.5} />
                     </div>
                     <div>
                       <span className="text-sm font-semibold text-navy">{step.label}</span>
                       <p className="text-xs text-slate-400">{step.description}</p>
                     </div>
-                  </div>
+                  </button>
                   {i < steps.length - 1 && (
                     <div className="w-px h-6 bg-slate-100 ml-[18px]" />
                   )}

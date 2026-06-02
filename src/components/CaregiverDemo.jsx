@@ -13,7 +13,9 @@ import {
   X,
   RefreshCw,
   User,
+  RotateCcw,
 } from 'lucide-react'
+import useInView from '../hooks/useInView'
 
 const initialReadings = {
   walkingStability: { label: 'Walking stability', value: 'Stable', icon: Activity, color: 'text-emerald-600', bg: 'bg-emerald-50' },
@@ -106,11 +108,15 @@ export default function CaregiverDemo() {
   const [selectedAlert, setSelectedAlert] = useState(null)
   const [simIndex, setSimIndex] = useState(0)
   const [simulating, setSimulating] = useState(false)
+  const [changedKeys, setChangedKeys] = useState(new Set())
+  const [ref, inView] = useInView()
 
   const simulateReading = () => {
     setSimulating(true)
     setTimeout(() => {
       const change = simulatedChanges[simIndex % simulatedChanges.length]
+      const newChangedKeys = new Set(Object.keys(change.readings))
+      setChangedKeys(newChangedKeys)
       setReadings((prev) => {
         const next = { ...prev }
         Object.entries(change.readings).forEach(([key, updates]) => {
@@ -122,23 +128,33 @@ export default function CaregiverDemo() {
       setAlerts((prev) => [newAlert, ...prev].slice(0, 5))
       setSimIndex((i) => i + 1)
       setSimulating(false)
+      setTimeout(() => setChangedKeys(new Set()), 1500)
     }, 600)
+  }
+
+  const resetDemo = () => {
+    setReadings(initialReadings)
+    setAlerts([alertPool[2], alertPool[3]])
+    setSimIndex(0)
+    setChangedKeys(new Set())
   }
 
   return (
     <section id="demo" className="py-24 md:py-32">
       <div className="max-w-5xl mx-auto px-6">
         <div className="border-t border-slate-100 pt-24 md:pt-32">
-          <span className="section-label">Interactive Demo</span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-navy tracking-tight leading-snug max-w-xl">
-            Try the caregiver app demo
-          </h2>
-          <p className="mt-4 text-base sm:text-lg text-slate-400 max-w-2xl">
-            See how readings from the smart goggles become clear caregiver alerts.
-          </p>
+          <div ref={ref} className={`fade-in-up ${inView ? 'visible' : ''}`}>
+            <span className="section-label">Interactive Demo</span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-navy tracking-tight leading-snug max-w-xl">
+              Try the caregiver app demo
+            </h2>
+            <p className="mt-4 text-base sm:text-lg text-slate-400 max-w-2xl">
+              See how readings from the smart goggles become clear caregiver alerts.
+            </p>
+          </div>
 
           {/* Demo container */}
-          <div className="mt-14 rounded-2xl border border-slate-100 overflow-hidden bg-white">
+          <div className={`mt-14 rounded-2xl border border-slate-100 overflow-hidden bg-white fade-in-up ${inView ? 'visible' : ''}`} style={{ transitionDelay: '200ms' }}>
             {/* Profile bar */}
             <div className="border-b border-slate-50 px-5 sm:px-6 py-4 flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-center gap-3">
@@ -150,14 +166,25 @@ export default function CaregiverDemo() {
                   <p className="text-[11px] text-slate-400">Age 72 · At home</p>
                 </div>
               </div>
-              <button
-                onClick={simulateReading}
-                disabled={simulating}
-                className="inline-flex items-center gap-2 bg-navy text-white text-[13px] font-medium px-5 py-2 rounded-full hover:bg-navy-700 transition-colors disabled:opacity-50"
-              >
-                <RefreshCw size={13} className={simulating ? 'animate-spin' : ''} />
-                Simulate new reading
-              </button>
+              <div className="flex items-center gap-2">
+                {simIndex > 0 && (
+                  <button
+                    onClick={resetDemo}
+                    className="inline-flex items-center gap-1.5 text-[13px] text-slate-400 hover:text-navy px-3 py-2 rounded-full border border-slate-100 hover:border-slate-200 transition-all"
+                  >
+                    <RotateCcw size={12} />
+                    Reset
+                  </button>
+                )}
+                <button
+                  onClick={simulateReading}
+                  disabled={simulating}
+                  className="inline-flex items-center gap-2 bg-navy text-white text-[13px] font-medium px-5 py-2 rounded-full hover:bg-navy-700 transition-colors disabled:opacity-50"
+                >
+                  <RefreshCw size={13} className={simulating ? 'animate-spin' : ''} />
+                  Simulate new reading
+                </button>
+              </div>
             </div>
 
             <div className="p-5 sm:p-6 grid md:grid-cols-5 lg:grid-cols-3 gap-6">
@@ -170,12 +197,16 @@ export default function CaregiverDemo() {
                   {Object.entries(readings).map(([key, r]) => (
                     <div
                       key={key}
-                      className="flex items-center gap-3 rounded-lg px-3.5 py-2.5 bg-slate-50/60 transition-colors"
+                      className={`flex items-center gap-3 rounded-lg px-3.5 py-2.5 transition-all duration-500 ${
+                        changedKeys.has(key)
+                          ? 'bg-amber-50/80 ring-1 ring-amber-200'
+                          : 'bg-slate-50/60'
+                      }`}
                     >
-                      <r.icon size={15} className={`${r.color} flex-shrink-0`} strokeWidth={1.5} />
+                      <r.icon size={15} className={`${r.color} flex-shrink-0 transition-colors duration-500`} strokeWidth={1.5} />
                       <div className="min-w-0">
                         <p className="text-[11px] text-slate-400">{r.label}</p>
-                        <p className={`text-sm font-medium ${r.color}`}>{r.value}</p>
+                        <p className={`text-sm font-medium transition-colors duration-500 ${r.color}`}>{r.value}</p>
                       </div>
                     </div>
                   ))}
@@ -193,13 +224,17 @@ export default function CaregiverDemo() {
                     <button
                       key={`${alert.title}-${i}`}
                       onClick={() => setSelectedAlert(alert)}
-                      className="w-full text-left rounded-lg px-3.5 py-2.5 bg-slate-50/60 hover:bg-slate-50 transition-all group"
+                      className={`w-full text-left rounded-lg px-3.5 py-2.5 transition-all group ${
+                        alert.time === 'Just now'
+                          ? 'bg-amber-50/60 hover:bg-amber-50'
+                          : 'bg-slate-50/60 hover:bg-slate-50'
+                      }`}
                     >
                       <div className="flex items-start justify-between gap-2">
                         <p className="text-sm text-slate-600 group-hover:text-navy transition-colors">
                           {alert.title}
                         </p>
-                        <ChevronRight size={13} className="text-slate-300 mt-0.5 flex-shrink-0" />
+                        <ChevronRight size={13} className="text-slate-300 mt-0.5 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
                       </div>
                       <div className="flex items-center gap-2 mt-1">
                         <SeverityDot severity={alert.severity} />
@@ -225,7 +260,7 @@ export default function CaregiverDemo() {
               onClick={() => setSelectedAlert(null)}
             >
               <div
-                className="bg-white rounded-2xl shadow-2xl max-w-sm sm:max-w-md w-full p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto"
+                className="bg-white rounded-2xl shadow-2xl max-w-sm sm:max-w-md w-full p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto lightbox-enter"
                 onClick={(e) => e.stopPropagation()}
               >
                 <button

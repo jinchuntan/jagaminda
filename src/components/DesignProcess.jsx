@@ -1,3 +1,6 @@
+import { useState } from 'react'
+import useInView from '../hooks/useInView'
+
 const steps = [
   {
     title: 'Survey and care journey mapping',
@@ -21,25 +24,45 @@ const steps = [
   },
 ]
 
+function AnimatedNumber({ n, inView }) {
+  const [display, setDisplay] = useState(0)
+
+  if (inView && display < n) {
+    setTimeout(() => setDisplay((d) => Math.min(d + 1, n)), n === 1 ? 0 : (n - 1) * 120)
+  }
+
+  return <span>0{inView ? display : 0}</span>
+}
+
 export default function DesignProcess() {
+  const [expandedStep, setExpandedStep] = useState(null)
+  const [ref, inView] = useInView()
+
   return (
     <section id="process" className="py-24 md:py-32">
       <div className="max-w-5xl mx-auto px-6">
         <div className="border-t border-slate-100 pt-24 md:pt-32">
-          <span className="section-label">Design Process</span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-navy tracking-tight leading-snug max-w-xl">
-            From concept to working prototype
-          </h2>
+          <div ref={ref} className={`fade-in-up ${inView ? 'visible' : ''}`}>
+            <span className="section-label">Design Process</span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-navy tracking-tight leading-snug max-w-xl">
+              From concept to working prototype
+            </h2>
+          </div>
 
-          <div className="mt-16 space-y-0">
+          <div className={`mt-16 space-y-0 stagger-children ${inView ? 'visible' : ''}`}>
             {steps.map((step, i) => (
-              <div
+              <button
                 key={step.title}
-                className="grid grid-cols-[auto_1fr] gap-6 sm:gap-8"
+                onClick={() => setExpandedStep(expandedStep === i ? null : i)}
+                className="grid grid-cols-[auto_1fr] gap-6 sm:gap-8 w-full text-left group"
               >
                 {/* Number + line */}
                 <div className="flex flex-col items-center">
-                  <span className="text-[11px] font-bold text-slate-300 w-7 h-7 flex items-center justify-center">
+                  <span className={`text-[11px] font-bold w-7 h-7 flex items-center justify-center rounded-full transition-all duration-300 ${
+                    expandedStep === i
+                      ? 'bg-navy text-white'
+                      : 'text-slate-300 group-hover:text-navy'
+                  }`}>
                     0{i + 1}
                   </span>
                   {i < steps.length - 1 && (
@@ -49,14 +72,20 @@ export default function DesignProcess() {
 
                 {/* Content */}
                 <div className="pb-12 sm:pb-14">
-                  <h3 className="text-base font-semibold text-navy -mt-0.5">
+                  <h3 className={`text-base font-semibold -mt-0.5 transition-colors duration-300 ${
+                    expandedStep === i ? 'text-navy' : 'text-navy group-hover:text-navy-600'
+                  }`}>
                     {step.title}
                   </h3>
-                  <p className="mt-2 text-sm text-slate-400 leading-relaxed max-w-lg">
-                    {step.copy}
-                  </p>
+                  <div className={`overflow-hidden transition-all duration-500 ${
+                    expandedStep === i ? 'max-h-40 opacity-100 mt-2' : 'max-h-0 opacity-0 mt-0 sm:max-h-40 sm:opacity-100 sm:mt-2'
+                  }`}>
+                    <p className="text-sm text-slate-400 leading-relaxed max-w-lg">
+                      {step.copy}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>

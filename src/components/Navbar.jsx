@@ -12,10 +12,26 @@ const navLinks = [
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [activeSection, setActiveSection] = useState('')
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
-    window.addEventListener('scroll', onScroll)
+    const sectionIds = navLinks.map((l) => l.href.slice(1))
+
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40)
+
+      const scrollPos = window.scrollY + 120
+      let current = ''
+      for (const id of sectionIds) {
+        const el = document.getElementById(id)
+        if (el && el.offsetTop <= scrollPos) {
+          current = id
+        }
+      }
+      setActiveSection(current)
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
@@ -43,7 +59,11 @@ export default function Navbar() {
             <a
               key={link.href}
               href={link.href}
-              className="text-[13px] text-slate-400 hover:text-navy transition-colors duration-300"
+              className={`text-[13px] transition-colors duration-300 ${
+                activeSection === link.href.slice(1)
+                  ? 'text-navy font-medium'
+                  : 'text-slate-400 hover:text-navy'
+              }`}
             >
               {link.label}
             </a>
@@ -67,7 +87,11 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="text-sm text-slate-400 hover:text-navy py-3 transition-colors"
+                className={`text-sm py-3 transition-colors ${
+                  activeSection === link.href.slice(1)
+                    ? 'text-navy font-medium'
+                    : 'text-slate-400 hover:text-navy'
+                }`}
               >
                 {link.label}
               </a>
