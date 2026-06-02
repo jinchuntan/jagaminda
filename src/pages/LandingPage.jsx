@@ -10,7 +10,6 @@ import DesignProcess from '../components/DesignProcess'
 import Differentiator from '../components/Differentiator'
 import Gallery from '../components/Gallery'
 import FuturePlans from '../components/FuturePlans'
-import Awards from '../components/Awards'
 import Footer from '../components/Footer'
 
 export default function LandingPage() {
@@ -29,7 +28,6 @@ export default function LandingPage() {
         <Differentiator />
         <Gallery />
         <FuturePlans />
-        <Awards />
       </main>
       <Footer />
     </div>

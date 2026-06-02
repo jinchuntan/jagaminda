@@ -3,109 +3,156 @@ import { Radio, Cpu, Send, Bell, HeartHandshake } from 'lucide-react'
 import useInView from '../hooks/useInView'
 
 const steps = [
-  { icon: Radio, label: 'Sense', description: 'Goggles read motion, light and humidity' },
-  { icon: Cpu, label: 'Process', description: 'ESP32 combines sensor signals' },
-  { icon: Send, label: 'Send', description: 'Bluetooth transmits to the app' },
-  { icon: Bell, label: 'Alert', description: 'App detects unusual changes' },
-  { icon: HeartHandshake, label: 'Act', description: 'Caregiver knows when to check in' },
+  {
+    icon: Radio,
+    label: 'Sense',
+    short: 'Goggles read motion, light and humidity',
+    detail: 'A motion sensor reads tilt, movement and sudden impact to detect unstable walking or falls. Light and environmental sensors monitor exposure around the wearer.',
+  },
+  {
+    icon: Cpu,
+    label: 'Process',
+    short: 'ESP32 combines sensor signals',
+    detail: 'The key technology is our custom graphene oxide coated Aluminium Nitride sensor. When light or humidity conditions change, it produces measurable electrical changes. An ESP32 chip reads these alongside motion data.',
+  },
+  {
+    icon: Send,
+    label: 'Send',
+    short: 'Bluetooth transmits to the app',
+    detail: 'The ESP32 combines sensor readings and transmits them by Bluetooth to the companion caregiver app. No internet connection is required for the wearable itself.',
+  },
+  {
+    icon: Bell,
+    label: 'Alert',
+    short: 'App detects unusual changes',
+    detail: 'The app compares new readings with the wearer\'s normal pattern. When a value moves outside the expected range, the system raises a clear alert instead of showing raw numbers.',
+  },
+  {
+    icon: HeartHandshake,
+    label: 'Act',
+    short: 'Caregiver knows when to check in',
+    detail: 'Each alert explains what changed and suggests a next step, helping caregivers decide whether to check in, adjust a routine or speak with a doctor.',
+  },
 ]
 
 export default function HowItWorks() {
-  const [activeStep, setActiveStep] = useState(null)
+  const [activeStep, setActiveStep] = useState(0)
   const [ref, inView] = useInView()
   const [flowRef, flowInView] = useInView()
 
   return (
     <section id="how-it-works" className="py-24 md:py-32">
-      <div className="max-w-5xl mx-auto px-6">
-        <div className="border-t border-slate-100 pt-24 md:pt-32">
-          <div ref={ref} className={`fade-in-up ${inView ? 'visible' : ''}`}>
-            <span className="section-label">How It Works</span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-navy tracking-tight leading-snug max-w-xl">
-              How the design works
-            </h2>
-            <p className="mt-6 text-base sm:text-lg text-slate-400 leading-relaxed max-w-2xl">
-              JagaMinda starts with the smart goggles. A motion sensor reads tilt, movement and sudden impact to detect unstable walking or falls. Light and environmental sensors monitor exposure around the wearer. The key technology is our custom graphene oxide coated Aluminium Nitride sensor. Aluminium Nitride responds to light, while graphene oxide reacts strongly to moisture in the air. When these conditions change, the sensor produces small electrical changes that can be measured. An ESP32 chip inside the goggles reads these signals, combines them with motion data and sends the readings by Bluetooth to the caregiver app. The app compares the readings with the wearer's normal pattern and turns unusual changes into simple alerts.
-            </p>
+      <div className="max-w-6xl mx-auto px-6">
+        <div ref={ref} className={`fade-in-up ${inView ? 'visible' : ''}`}>
+          <span className="section-label">How It Works</span>
+          <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-bold text-navy tracking-tight leading-snug max-w-xl">
+            From sensor to caregiver action
+          </h2>
+          <p className="mt-6 text-base sm:text-lg text-slate-400 leading-relaxed max-w-2xl">
+            JagaMinda starts with the smart goggles. Aluminium Nitride responds to light, while graphene oxide reacts strongly to moisture in the air. These signals combine with motion data and reach the caregiver as clear, actionable alerts.
+          </p>
+        </div>
+
+        {/* Interactive process flow */}
+        <div ref={flowRef} className={`mt-16 sm:mt-20 fade-in-up ${flowInView ? 'visible' : ''}`}>
+          {/* Desktop flow — step cards */}
+          <div className="hidden sm:grid grid-cols-5 gap-3">
+            {steps.map((step, i) => (
+              <button
+                key={step.label}
+                onClick={() => setActiveStep(i)}
+                className={`relative rounded-xl border p-4 text-left transition-all duration-300 ${
+                  activeStep === i
+                    ? 'bg-navy border-navy text-white shadow-elevated'
+                    : 'bg-white border-slate-100 shadow-card hover:shadow-card-hover hover:border-slate-200'
+                }`}
+              >
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-3 transition-colors duration-300 ${
+                  activeStep === i
+                    ? 'bg-white/15'
+                    : 'bg-navy-50'
+                }`}>
+                  <step.icon size={16} strokeWidth={1.5} className={activeStep === i ? 'text-white' : 'text-navy-400'} />
+                </div>
+                <span className={`text-xs font-semibold tracking-wide ${
+                  activeStep === i ? 'text-white' : 'text-navy'
+                }`}>
+                  {step.label}
+                </span>
+                <p className={`mt-1 text-[11px] leading-snug ${
+                  activeStep === i ? 'text-white/70' : 'text-slate-400'
+                }`}>
+                  {step.short}
+                </p>
+                {/* Step number */}
+                <span className={`absolute top-3 right-3 text-[10px] font-bold ${
+                  activeStep === i ? 'text-white/30' : 'text-slate-200'
+                }`}>
+                  0{i + 1}
+                </span>
+              </button>
+            ))}
           </div>
 
-          {/* Interactive process flow */}
-          <div ref={flowRef} className={`mt-16 sm:mt-20 fade-in-up ${flowInView ? 'visible' : ''}`}>
-            {/* Desktop flow */}
-            <div className="hidden sm:grid grid-cols-5 gap-0">
-              {steps.map((step, i) => (
+          {/* Mobile flow */}
+          <div className="flex sm:hidden flex-col gap-0">
+            {steps.map((step, i) => (
+              <div key={step.label}>
                 <button
-                  key={step.label}
-                  onClick={() => setActiveStep(activeStep === i ? null : i)}
-                  className="relative flex flex-col items-center text-center group cursor-pointer"
+                  onClick={() => setActiveStep(i)}
+                  className="flex items-center gap-4 w-full text-left group"
                 >
-                  {i < steps.length - 1 && (
-                    <div className="absolute top-5 left-1/2 w-full h-px bg-slate-100" />
-                  )}
-                  <div className={`relative z-10 w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-300 ${
+                  <div className={`w-10 h-10 rounded-full border flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
                     activeStep === i
-                      ? 'bg-navy border-navy text-white scale-110'
+                      ? 'bg-navy border-navy text-white'
                       : 'bg-white border-slate-200 text-slate-400 group-hover:border-navy group-hover:text-navy'
                   }`}>
-                    <step.icon size={16} strokeWidth={1.5} />
+                    <step.icon size={15} strokeWidth={1.5} />
                   </div>
-                  <span className={`mt-3 text-xs font-semibold tracking-wide transition-colors ${
-                    activeStep === i ? 'text-navy' : 'text-navy'
-                  }`}>
-                    {step.label}
-                  </span>
-                  <span className={`mt-1 text-[11px] leading-snug max-w-[10rem] transition-all duration-300 ${
-                    activeStep === i ? 'text-slate-600' : 'text-slate-400'
-                  }`}>
-                    {step.description}
-                  </span>
+                  <div className="flex-1">
+                    <span className="text-sm font-semibold text-navy">{step.label}</span>
+                    <p className="text-xs text-slate-400">{step.short}</p>
+                  </div>
                 </button>
-              ))}
-            </div>
-
-            {/* Mobile flow */}
-            <div className="flex sm:hidden flex-col gap-0">
-              {steps.map((step, i) => (
-                <div key={step.label}>
-                  <button
-                    onClick={() => setActiveStep(activeStep === i ? null : i)}
-                    className="flex items-center gap-4 w-full text-left group"
-                  >
-                    <div className={`w-9 h-9 rounded-full border flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
-                      activeStep === i
-                        ? 'bg-navy border-navy text-white'
-                        : 'bg-white border-slate-200 text-slate-400 group-hover:border-navy group-hover:text-navy'
-                    }`}>
-                      <step.icon size={14} strokeWidth={1.5} />
-                    </div>
-                    <div>
-                      <span className="text-sm font-semibold text-navy">{step.label}</span>
-                      <p className="text-xs text-slate-400">{step.description}</p>
-                    </div>
-                  </button>
-                  {i < steps.length - 1 && (
-                    <div className="w-px h-6 bg-slate-100 ml-[18px]" />
-                  )}
-                </div>
-              ))}
-            </div>
+                {i < steps.length - 1 && (
+                  <div className="w-px h-6 bg-slate-100 ml-5" />
+                )}
+              </div>
+            ))}
           </div>
 
-          {/* System flow image */}
-          <div className="mt-16 sm:mt-20">
-            <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-slate-50">
-              <img
-                src="/images/jagaminda-system-flow.png"
-                alt="JagaMinda system flow diagram showing data path from wearable sensing through processing to caregiver alerts"
-                className="w-full h-full object-contain"
-                onError={(e) => {
-                  e.target.style.display = 'none'
-                  e.target.parentElement.classList.add('img-placeholder')
-                  e.target.parentElement.innerHTML =
-                    '<div class="text-center p-8"><p class="text-slate-300 text-sm">jagaminda-system-flow.png</p></div>'
-                }}
-              />
+          {/* Detail panel */}
+          <div className="mt-8 bg-white rounded-xl border border-slate-100 shadow-card p-6 sm:p-8 lightbox-enter" key={activeStep}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-navy-50 flex items-center justify-center">
+                {(() => {
+                  const StepIcon = steps[activeStep].icon
+                  return <StepIcon size={14} className="text-navy-400" strokeWidth={1.5} />
+                })()}
+              </div>
+              <span className="text-sm font-semibold text-navy">{steps[activeStep].label}</span>
+              <span className="text-[10px] font-bold text-slate-300">Step 0{activeStep + 1}</span>
             </div>
+            <p className="text-sm sm:text-base text-slate-500 leading-relaxed max-w-2xl">
+              {steps[activeStep].detail}
+            </p>
+          </div>
+        </div>
+
+        {/* System flow image */}
+        <div className="mt-16 sm:mt-20">
+          <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-slate-50 shadow-card">
+            <img
+              src="/images/jagaminda-system-flow.png"
+              alt="JagaMinda system flow diagram showing data path from wearable sensing through processing to caregiver alerts"
+              className="w-full h-full object-contain"
+              onError={(e) => {
+                e.target.style.display = 'none'
+                e.target.parentElement.classList.add('img-placeholder')
+                e.target.parentElement.innerHTML =
+                  '<div class="text-center p-8"><p class="text-slate-300 text-sm">jagaminda-system-flow.png</p></div>'
+              }}
+            />
           </div>
         </div>
       </div>

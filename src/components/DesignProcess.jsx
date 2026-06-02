@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import useInView from '../hooks/useInView'
 
 const steps = [
@@ -24,68 +23,54 @@ const steps = [
   },
 ]
 
-function AnimatedNumber({ n, inView }) {
-  const [display, setDisplay] = useState(0)
-
-  if (inView && display < n) {
-    setTimeout(() => setDisplay((d) => Math.min(d + 1, n)), n === 1 ? 0 : (n - 1) * 120)
-  }
-
-  return <span>0{inView ? display : 0}</span>
-}
-
 export default function DesignProcess() {
-  const [expandedStep, setExpandedStep] = useState(null)
   const [ref, inView] = useInView()
 
   return (
     <section id="process" className="py-24 md:py-32">
-      <div className="max-w-5xl mx-auto px-6">
-        <div className="border-t border-slate-100 pt-24 md:pt-32">
-          <div ref={ref} className={`fade-in-up ${inView ? 'visible' : ''}`}>
-            <span className="section-label">Design Process</span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-navy tracking-tight leading-snug max-w-xl">
-              From concept to working prototype
-            </h2>
-          </div>
+      <div className="max-w-6xl mx-auto px-6">
+        <div ref={ref} className={`fade-in-up ${inView ? 'visible' : ''}`}>
+          <span className="section-label">Design Process</span>
+          <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-bold text-navy tracking-tight leading-snug max-w-xl">
+            From concept to working prototype
+          </h2>
+        </div>
 
-          <div className={`mt-16 space-y-0 stagger-children ${inView ? 'visible' : ''}`}>
+        {/* Timeline */}
+        <div className={`mt-16 relative stagger-children ${inView ? 'visible' : ''}`}>
+          {/* Vertical line — desktop only */}
+          <div className="hidden sm:block absolute left-[19px] top-0 bottom-0 w-px bg-gradient-to-b from-navy-200 via-navy-100 to-transparent" />
+
+          <div className="space-y-0">
             {steps.map((step, i) => (
-              <button
+              <div
                 key={step.title}
-                onClick={() => setExpandedStep(expandedStep === i ? null : i)}
-                className="grid grid-cols-[auto_1fr] gap-6 sm:gap-8 w-full text-left group"
+                className="relative grid grid-cols-[auto_1fr] gap-6 sm:gap-8 group"
               >
-                {/* Number + line */}
+                {/* Number circle + line */}
                 <div className="flex flex-col items-center">
-                  <span className={`text-[11px] font-bold w-7 h-7 flex items-center justify-center rounded-full transition-all duration-300 ${
-                    expandedStep === i
-                      ? 'bg-navy text-white'
-                      : 'text-slate-300 group-hover:text-navy'
-                  }`}>
-                    0{i + 1}
-                  </span>
+                  <div className="relative z-10 w-10 h-10 rounded-full bg-white border-2 border-navy-200 flex items-center justify-center group-hover:border-navy group-hover:bg-navy transition-all duration-300">
+                    <span className="text-[11px] font-bold text-navy-400 group-hover:text-white transition-colors duration-300">
+                      0{i + 1}
+                    </span>
+                  </div>
                   {i < steps.length - 1 && (
-                    <div className="w-px flex-1 bg-slate-100 mt-2" />
+                    <div className="w-px flex-1 bg-slate-100 sm:bg-transparent mt-2" />
                   )}
                 </div>
 
-                {/* Content */}
-                <div className="pb-12 sm:pb-14">
-                  <h3 className={`text-base font-semibold -mt-0.5 transition-colors duration-300 ${
-                    expandedStep === i ? 'text-navy' : 'text-navy group-hover:text-navy-600'
-                  }`}>
-                    {step.title}
-                  </h3>
-                  <div className={`overflow-hidden transition-all duration-500 ${
-                    expandedStep === i ? 'max-h-40 opacity-100 mt-2' : 'max-h-0 opacity-0 mt-0 sm:max-h-40 sm:opacity-100 sm:mt-2'
-                  }`}>
-                    <p className="text-sm text-slate-400 leading-relaxed max-w-lg">
+                {/* Content card */}
+                <div className="pb-10 sm:pb-12">
+                  <div className="bg-white rounded-xl border border-slate-100 p-5 sm:p-6 shadow-card group-hover:shadow-card-hover group-hover:border-slate-200 transition-all duration-300 -mt-1.5">
+                    <h3 className="text-[15px] font-semibold text-navy group-hover:text-navy-600 transition-colors duration-300">
+                      {step.title}
+                    </h3>
+                    <p className="mt-2 text-sm text-slate-400 leading-relaxed max-w-lg">
                       {step.copy}
                     </p>
                   </div>
                 </div>
-              </button>
+              </div>
             ))}
           </div>
         </div>
