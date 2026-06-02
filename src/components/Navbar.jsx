@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 
 const navLinks = [
   { label: 'How it works', href: '#how-it-works' },
   { label: 'Sensor', href: '#sensor' },
-  { label: 'Demo', href: '#demo' },
+  { label: 'Demo', to: '/demo' },
   { label: 'Process', href: '#process' },
   { label: 'Gallery', href: '#gallery' },
 ]
@@ -15,7 +16,7 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState('')
 
   useEffect(() => {
-    const sectionIds = navLinks.map((l) => l.href.slice(1))
+    const sectionIds = navLinks.filter((l) => l.href).map((l) => l.href.slice(1))
 
     const onScroll = () => {
       setScrolled(window.scrollY > 40)
@@ -55,19 +56,29 @@ export default function Navbar() {
         </a>
 
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className={`text-[13px] transition-colors duration-300 ${
-                activeSection === link.href.slice(1)
-                  ? 'text-navy font-medium'
-                  : 'text-slate-400 hover:text-navy'
-              }`}
-            >
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) =>
+            link.to ? (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="text-[13px] text-slate-400 hover:text-navy transition-colors duration-300"
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <a
+                key={link.href}
+                href={link.href}
+                className={`text-[13px] transition-colors duration-300 ${
+                  activeSection === link.href.slice(1)
+                    ? 'text-navy font-medium'
+                    : 'text-slate-400 hover:text-navy'
+                }`}
+              >
+                {link.label}
+              </a>
+            )
+          )}
         </div>
 
         <button
@@ -82,20 +93,31 @@ export default function Navbar() {
       {open && (
         <div className="md:hidden bg-white/95 backdrop-blur-md border-t border-slate-50">
           <div className="max-w-5xl mx-auto px-6 py-6 flex flex-col gap-1">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setOpen(false)}
-                className={`text-sm py-3 transition-colors ${
-                  activeSection === link.href.slice(1)
-                    ? 'text-navy font-medium'
-                    : 'text-slate-400 hover:text-navy'
-                }`}
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              link.to ? (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  onClick={() => setOpen(false)}
+                  className="text-sm text-slate-400 hover:text-navy py-3 transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  className={`text-sm py-3 transition-colors ${
+                    activeSection === link.href.slice(1)
+                      ? 'text-navy font-medium'
+                      : 'text-slate-400 hover:text-navy'
+                  }`}
+                >
+                  {link.label}
+                </a>
+              )
+            )}
           </div>
         </div>
       )}

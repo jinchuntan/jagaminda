@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 import { ArrowDown, ChevronLeft, ChevronRight } from 'lucide-react'
 
 const tags = ['Smart goggles', 'Custom sensor', 'Caregiver alerts', 'Patent pending']
@@ -120,12 +121,12 @@ export default function Hero() {
               How it works
               <ArrowDown size={14} />
             </a>
-            <a
-              href="#demo"
+            <Link
+              to="/demo"
               className="inline-flex items-center gap-2 text-[13px] font-medium text-navy border border-slate-200 px-6 py-2.5 rounded-full hover:border-navy hover:bg-navy-50 transition-all"
             >
               Try demo
-            </a>
+            </Link>
           </div>
         </div>
 
