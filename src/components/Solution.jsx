@@ -20,30 +20,26 @@ const cards = [
 
 export default function Solution() {
   return (
-    <section id="solution" className="py-20 md:py-28 bg-slate-50">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-navy">
-            A protective layer that families can understand
-          </h2>
-          <p className="mt-6 text-base sm:text-lg text-slate-600 leading-relaxed">
-            JagaMinda is worn like everyday eyewear, but the frame carries a small sensing system. The goggles monitor movement, falls, light exposure and environmental changes. The caregiver app receives the readings and turns them into simple alerts, so families know what changed and when to check in.
-          </p>
-        </div>
+    <section id="solution" className="pb-24 md:pb-32">
+      <div className="max-w-5xl mx-auto px-6">
+        <span className="section-label">The Solution</span>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-navy tracking-tight leading-snug max-w-xl">
+          A protective layer that families can understand
+        </h2>
+        <p className="mt-6 text-base sm:text-lg text-slate-400 leading-relaxed max-w-2xl">
+          JagaMinda is worn like everyday eyewear, but the frame carries a small sensing system. The goggles monitor movement, falls, light exposure and environmental changes. The caregiver app receives the readings and turns them into simple alerts, so families know what changed and when to check in.
+        </p>
 
-        <div className="mt-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="mt-16 grid sm:grid-cols-3 gap-12 sm:gap-8">
           {cards.map((card) => (
-            <div
-              key={card.title}
-              className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
-            >
-              <div className="w-12 h-12 rounded-xl bg-navy-50 flex items-center justify-center text-navy-600">
-                <card.icon size={24} />
+            <div key={card.title}>
+              <div className="w-10 h-10 rounded-lg bg-navy-50 flex items-center justify-center text-navy-400">
+                <card.icon size={20} strokeWidth={1.5} />
               </div>
-              <h3 className="mt-5 text-xl font-semibold text-navy">
+              <h3 className="mt-5 text-base font-semibold text-navy">
                 {card.title}
               </h3>
-              <p className="mt-3 text-slate-600 leading-relaxed">
+              <p className="mt-2 text-sm text-slate-400 leading-relaxed">
                 {card.copy}
               </p>
             </div>

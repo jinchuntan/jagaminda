@@ -28,39 +28,40 @@ const galleryItems = [
 
 export default function Gallery() {
   return (
-    <section id="gallery" className="py-20 md:py-28">
-      <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-3xl md:text-4xl font-bold text-navy text-center">
-          Prototype evidence
-        </h2>
+    <section id="gallery" className="py-24 md:py-32">
+      <div className="max-w-5xl mx-auto px-6">
+        <div className="border-t border-slate-100 pt-24 md:pt-32">
+          <span className="section-label">Evidence</span>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-navy tracking-tight leading-snug max-w-xl">
+            Prototype evidence
+          </h2>
 
-        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {galleryItems.map((item) => (
-            <div
-              key={item.caption}
-              className="group rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="aspect-[4/3] bg-slate-50 overflow-hidden flex items-center justify-center">
-                <img
-                  src={item.src}
-                  alt={item.alt}
-                  className="w-full h-full object-contain p-2 group-hover:scale-[1.02] transition-transform duration-300"
-                  onError={(e) => {
-                    e.target.style.display = 'none'
-                    e.target.parentElement.classList.add('img-placeholder')
-                    const filename = item.src.split('/').pop()
-                    e.target.parentElement.innerHTML =
-                      `<div class="text-center p-6"><p class="text-slate-400 text-sm">${item.caption}</p><p class="text-slate-300 text-xs mt-1">${filename}</p></div>`
-                  }}
-                />
-              </div>
-              <div className="px-5 py-4">
-                <p className="text-sm font-medium text-slate-700">
+          <div className="mt-14 grid sm:grid-cols-2 gap-4">
+            {galleryItems.map((item, i) => (
+              <div
+                key={item.caption}
+                className={`group ${i === 0 ? 'sm:col-span-2' : ''}`}
+              >
+                <div className={`${i === 0 ? 'aspect-[2/1]' : 'aspect-[4/3]'} rounded-xl overflow-hidden bg-slate-50`}>
+                  <img
+                    src={item.src}
+                    alt={item.alt}
+                    className="w-full h-full object-contain p-3 group-hover:scale-[1.01] transition-transform duration-500"
+                    onError={(e) => {
+                      e.target.style.display = 'none'
+                      e.target.parentElement.classList.add('img-placeholder')
+                      const filename = item.src.split('/').pop()
+                      e.target.parentElement.innerHTML =
+                        `<div class="text-center p-6"><p class="text-slate-300 text-sm">${filename}</p></div>`
+                    }}
+                  />
+                </div>
+                <p className="mt-3 text-[13px] text-slate-400">
                   {item.caption}
                 </p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>

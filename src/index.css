@@ -2,15 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  scroll-behavior: smooth;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white text-slate-500 font-sans;
+  }
+
+  ::selection {
+    background: #d6e4f5;
+    color: #0A2540;
+  }
 }
 
-body {
-  @apply bg-white text-slate-800 font-sans;
-}
+@layer components {
+  .section-label {
+    @apply text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-300 block mb-5;
+  }
 
-/* Image placeholder styling for missing images */
-.img-placeholder {
-  @apply bg-slate-100 flex items-center justify-center text-slate-400 text-sm;
+  .img-placeholder {
+    @apply bg-slate-50 flex items-center justify-center text-slate-300 text-sm;
+  }
 }
